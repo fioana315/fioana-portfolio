@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fioana Luthra</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;}
+html,body{width:100%;height:100vh;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',sans-serif;background:#c8c9a8;}
+#desktop{width:100%;height:100vh;position:relative;overflow:hidden;}
+#wallpaper{position:absolute;inset:0;background-image:url('Wallpaper.jpg');background-size:cover;background-position:center;background-color:#c8c9a8;}
+#menubar{position:absolute;top:0;left:0;right:0;height:28px;background:rgba(180,185,160,0.72);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100;font-size:13px;font-weight:500;border-bottom:0.5px solid rgba(0,0,0,0.08);color:#1a1a1a;}
+#menubar-left{display:flex;align-items:center;gap:18px;}
+#menubar-right{display:flex;align-items:center;gap:14px;font-size:12px;}
+.folder-icon{position:absolute;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:8px;border-radius:8px;width:90px;transition:background 0.15s;}
+.folder-icon:hover{background:rgba(255,255,255,0.22);}
+.folder-label{font-size:12px;color:white;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,0.9),0 0 12px rgba(0,0,0,0.6);font-weight:500;line-height:1.3;}
+#dock-outer{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.2);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:0.5px solid rgba(255,255,255,0.45);border-radius:20px;padding:5px 12px;display:flex;align-items:flex-end;gap:3px;z-index:100;box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.12),0 4px 24px rgba(0,0,0,0.15);}
+.dock-app{width:54px;height:54px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.12s ease;flex-shrink:0;position:relative;}
+.dock-app:hover{transform:translateY(-14px) scale(1.28);}
+.dock-app img{width:52px;height:52px;border-radius:13px;object-fit:cover;}
+.dock-sep{width:1px;height:40px;background:rgba(255,255,255,0.38);margin:0 3px;align-self:center;}
+.window{position:absolute;background:rgba(242,242,238,0.98);border-radius:12px;border:0.5px solid rgba(0,0,0,0.18);box-shadow:0 24px 80px rgba(0,0,0,0.45),0 0 0 0.5px rgba(255,255,255,0.3) inset;z-index:200;display:flex;flex-direction:column;overflow:hidden;}
+.window-titlebar{height:40px;background:rgba(232,232,228,0.99);display:flex;align-items:center;padding:0 14px;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.1);cursor:grab;flex-shrink:0;}
+.window-titlebar:active{cursor:grabbing;}
+.traffic-lights{display:flex;gap:8px;align-items:center;}
+.tl{width:12px;height:12px;border-radius:50%;cursor:pointer;flex-shrink:0;}
+.tl-close{background:#ff5f57;border:0.5px solid rgba(220,60,40,0.4);}
+.tl-min{background:#febc2e;border:0.5px solid rgba(200,150,0,0.4);}
+.tl-max{background:#28c840;border:0.5px solid rgba(0,180,30,0.4);}
+.tl-close:hover{background:#ff3b30;}
+.window-title{font-size:13px;font-weight:500;color:#1a1a1a;flex:1;text-align:center;margin-right:52px;}
+.window-body{flex:1;overflow-y:auto;padding:20px;}
+.window-body::-webkit-scrollbar{width:6px;}
+.window-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.2);border-radius:3px;}
+.about-content{display:flex;flex-direction:column;gap:16px;}
+.about-header{display:flex;align-items:center;gap:16px;}
+.about-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#4a7c59,#2d5a3d);display:flex;align-items:center;justify-content:center;font-size:28px;color:white;font-weight:600;flex-shrink:0;}
+.about-name{font-size:22px;font-weight:600;color:#1a1a1a;}
+.about-role{font-size:14px;color:#666;margin-top:3px;}
+.about-bio{font-size:14px;color:#333;line-height:1.75;}
+.tag{background:rgba(74,124,89,0.13);color:#2d5a3d;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;border:0.5px solid rgba(74,124,89,0.25);}
+.project-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.project-card{background:white;border-radius:10px;overflow:hidden;border:0.5px solid rgba(0,0,0,0.08);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;}
+.project-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.15);}
+.pcover{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#f0f0ec;}
+.pinfo{padding:12px 14px 14px;}
+.ptype{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;margin-bottom:5px;}
+.ptype.d{color:#7c4dff;}.ptype.u{color:#0097a7;}.ptype.a{color:#e65100;}.ptype.g{color:#c0392b;}
+.pname{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;line-height:1.3;}
+.pdesc{font-size:11px;color:#666;line-height:1.55;}
+.contact-link{display:flex;align-items:center;gap:6px;padding:8px 14px;background:white;border-radius:8px;border:0.5px solid rgba(0,0,0,0.12);font-size:13px;color:#333;cursor:pointer;transition:background 0.12s;text-decoration:none;}
+.contact-link:hover{background:#f0f0ec;}
+.contact-form{display:flex;flex-direction:column;gap:12px;max-width:420px;}
+.contact-form label{font-size:11px;font-weight:600;color:#666;margin-bottom:3px;display:block;text-transform:uppercase;letter-spacing:0.5px;}
+.contact-form input,.contact-form textarea{width:100%;padding:8px 12px;border-radius:8px;border:0.5px solid rgba(0,0,0,0.18);background:white;font-size:13px;font-family:inherit;outline:none;}
+.contact-form input:focus,.contact-form textarea:focus{border-color:#4a7c59;box-shadow:0 0 0 2px rgba(74,124,89,0.12);}
+.contact-form textarea{height:90px;resize:none;}
+.send-btn{background:#2d5a3d;color:white;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;align-self:flex-start;}
+.send-btn:hover{background:#4a7c59;}
+.resume-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#4a7c59;border-bottom:1px solid rgba(74,124,89,0.18);padding-bottom:5px;margin-bottom:10px;}
+.resume-item{margin-bottom:14px;}
+.resume-item-header{display:flex;justify-content:space-between;align-items:baseline;}
+.resume-item-title{font-size:14px;font-weight:600;color:#1a1a1a;}
+.resume-item-date{font-size:11px;color:#999;}
+.resume-item-sub{font-size:12px;color:#666;margin:2px 0;}
+.resume-item-desc{font-size:12px;color:#777;line-height:1.6;margin-top:4px;}
+.archive-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.archive-item{border-radius:8px;overflow:hidden;cursor:pointer;border:0.5px solid rgba(0,0,0,0.08);transition:transform 0.12s;}
+.archive-item:hover{transform:scale(1.03);}
+.archive-thumb{width:100%;height:90px;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.archive-label{font-size:11px;padding:6px 8px;background:white;color:#444;}
+.music-app{display:flex;height:100%;background:#1c1c1e;}
+.music-sidebar{width:175px;background:#2c2c2e;padding:12px 0;flex-shrink:0;border-right:0.5px solid rgba(255,255,255,0.07);}
+.music-sidebar-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:#666;padding:8px 16px 4px;}
+.music-sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 16px;font-size:13px;color:#ccc;cursor:pointer;transition:background 0.1s;}
+.music-sidebar-item:hover{background:rgba(255,255,255,0.07);}
+.music-sidebar-item.active{background:rgba(255,255,255,0.11);color:white;}
+.music-main{flex:1;padding:20px;overflow-y:auto;}
+.music-main::-webkit-scrollbar{width:4px;}
+.music-main::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px;}
+.music-header{font-size:22px;font-weight:700;color:white;margin-bottom:16px;}
+.playlist-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.playlist-card{border-radius:10px;overflow:hidden;cursor:pointer;transition:transform 0.15s;position:relative;}
+.playlist-card:hover{transform:scale(1.04);}
+.playlist-cover{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:52px;}
+.playlist-info{padding:8px 10px 10px;background:#2c2c2e;}
+.playlist-name{font-size:13px;font-weight:600;color:white;}
+.playlist-count{font-size:11px;color:#777;margin-top:2px;}
+.play-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;}
+.playlist-card:hover .play-overlay{opacity:1;}
+.play-btn-circle{width:46px;height:46px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;padding-left:3px;}
+.songs-back{display:flex;align-items:center;gap:4px;color:#fc3c44;font-size:13px;cursor:pointer;margin-bottom:16px;}
+.songs-back:hover{text-decoration:underline;}
+.songs-header{display:flex;gap:16px;margin-bottom:20px;align-items:flex-end;}
+.songs-cover{width:100px;height:100px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:50px;flex-shrink:0;}
+.songs-title{font-size:20px;font-weight:700;color:white;}
+.songs-subtitle{font-size:12px;color:#777;margin-top:4px;}
+.song-row{display:flex;align-items:center;gap:12px;padding:8px 6px;border-radius:6px;cursor:pointer;transition:background 0.1s;}
+.song-row:hover{background:rgba(255,255,255,0.08);}
+.song-num{font-size:13px;color:#666;width:22px;text-align:center;flex-shrink:0;}
+.song-info{flex:1;}
+.song-name{font-size:13px;color:white;font-weight:500;}
+.song-artist{font-size:11px;color:#777;margin-top:1px;}
+.song-dur{font-size:12px;color:#666;flex-shrink:0;}
+.song-playing{color:#fc3c44!important;}
+.nowplaying-bar{height:72px;background:#2c2c2e;border-top:0.5px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;}
+.np-cover{width:42px;height:42px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.np-info{flex:1;}
+.np-song{font-size:12px;font-weight:600;color:white;}
+.np-artist{font-size:11px;color:#777;margin-top:1px;}
+.np-controls{display:flex;align-items:center;gap:18px;}
+.np-btn{background:none;border:none;color:#aaa;font-size:18px;cursor:pointer;padding:4px;line-height:1;transition:color 0.1s;}
+.np-btn:hover{color:white;}
+.np-play{font-size:24px;color:white;}
+
+/* Project Preview */
+.preview-window{display:flex;height:100%;background:#1e1e1e;border-radius:0 0 12px 12px;overflow:hidden;}
+.preview-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#1e1e1e;}
+.preview-toolbar{height:44px;background:#2a2a2a;display:flex;align-items:center;justify-content:center;gap:20px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.preview-nav-btn{background:rgba(255,255,255,0.1);border:none;color:white;width:28px;height:28px;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.1s;}
+.preview-nav-btn:hover{background:rgba(255,255,255,0.2);}
+.preview-counter{font-size:12px;color:#aaa;min-width:50px;text-align:center;}
+.preview-content{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:16px;}
+.preview-content img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;}
+.preview-content video{max-width:100%;max-height:100%;border-radius:4px;outline:none;}
+.preview-filmstrip{height:100px;background:#252525;display:flex;align-items:center;gap:6px;padding:10px 14px;overflow-x:auto;flex-shrink:0;border-top:0.5px solid rgba(255,255,255,0.08);}
+.preview-filmstrip::-webkit-scrollbar{height:3px;}
+.preview-filmstrip::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px;}
+.filmstrip-item{height:74px;min-width:120px;border-radius:4px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;flex-shrink:0;background:#333;display:flex;align-items:center;justify-content:center;}
+.filmstrip-item.active{border-color:#0a84ff;}
+.filmstrip-item img{width:100%;height:100%;object-fit:cover;}
+.filmstrip-item .video-thumb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a1a2e;color:white;font-size:22px;}
+.preview-sidebar{width:260px;background:#f5f5f1;border-left:0.5px solid rgba(0,0,0,0.12);display:flex;flex-direction:column;padding:24px 20px;gap:12px;overflow-y:auto;flex-shrink:0;}
+.preview-sidebar-title{font-size:20px;font-weight:700;color:#1a1a1a;line-height:1.3;}
+.preview-sidebar-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:#888;margin-bottom:4px;}
+.preview-sidebar-section{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#4a7c59;margin-top:8px;}
+.preview-sidebar-desc{font-size:13px;color:#444;line-height:1.75;}
+.preview-divider{height:0.5px;background:rgba(0,0,0,0.1);}
+</style>
+</head>
+<body>
+<div id="desktop">
+  <div id="wallpaper"></div>
+
+  <div id="menubar">
+    <div id="menubar-left">
+      <svg width="14" height="17" viewBox="0 0 814 1000" fill="#1a1a1a"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-37.3-148.2-80.9c-43.2-43.6-78.7-105-103.2-168.1-24.5-63.1-38.6-128.3-38.6-191.5 0-84.1 28.8-152.3 94.7-206.3 65.9-54 140.2-81.3 220.6-81.3 79.6 0 143.2 39.5 187.5 39.5 43.5 0 115.2-41.5 205.5-41.5 33.3 0 108.2 3.2 164 50.7zm-107.4-176.2c39.5-47.8 67.5-114.4 67.5-181 0-9.3-.6-18.7-2.2-26.4-63.8 2.5-139.1 42.8-184.6 93.5-36.7 41.5-71.5 108.2-71.5 175.9 0 10.3 1.9 20.7 2.5 24 3.8.6 9.9 1.3 16 1.3 57.2 0 128.3-38.2 172.3-87.3z"/></svg>
+      <span style="font-weight:600">Finder</span>
+      <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span>
+    </div>
+    <div id="menubar-right">
+      <span id="menudate"></span>
+      <span id="clock"></span>
+    </div>
+  </div>
+
+  <!-- Folders -->
+  <div class="folder-icon" style="left:30px;top:48px" onclick="openWindow('about')">
+    <img src="icons/folder.png" width="64" height="64" style="object-fit:contain">
+    <div class="folder-label">About Me</div>
+  </div>
+  <div class="folder-icon" style="left:30px;top:158px" onclick="openWindow('projects')">
+    <img src="icons/folder.png" width="64" height="64" style="object-fit:contain">
+    <div class="folder-label">Projects</div>
+  </div>
+  <div class="folder-icon" style="left:30px;top:268px" onclick="openWindow('resume')">
+    <img src="icons/folder.png" width="64" height="64" style="object-fit:contain">
+    <div class="folder-label">Resume</div>
+  </div>
+  <div class="folder-icon" style="left:30px;top:378px" onclick="openWindow('contact')">
+    <img src="icons/folder.png" width="64" height="64" style="object-fit:contain">
+    <div class="folder-label">Contact Me</div>
+  </div>
+  <div class="folder-icon" style="left:30px;top:488px" onclick="openWindow('archive')">
+    <img src="icons/folder.png" width="64" height="64" style="object-fit:contain">
+    <div class="folder-label">Archive</div>
+  </div>
+
+
+  <!-- Dock -->
+  <div id="dock-outer">
+    <div class="dock-app" title="Finder"><img src="icons/finder.png"></div>
+    <div class="dock-app" title="App Store"><img src="icons/applications.png"></div>
+    <div class="dock-sep"></div>
+    <div class="dock-app" title="Mail" onclick="openWindow('contact')"><img src="icons/mail.png"></div>
+    <div class="dock-app" title="Messages"><img src="icons/messages.png"></div>
+    <div class="dock-app" title="FaceTime"><img src="icons/facetime.png"></div>
+    <div class="dock-app" title="Photos"><img src="icons/photos.png"></div>
+    <div class="dock-app" title="Music" onclick="openWindow('playlists')"><img src="icons/music.png"></div>
+    <div class="dock-app" title="Notes"><img src="icons/notes.png"></div>
+    <div class="dock-app" title="Discord"><img src="icons/discord.png"></div>
+    <div class="dock-app" title="WhatsApp"><img src="icons/whatsapp.png"></div>
+    <div class="dock-app" title="Steam"><img src="icons/steam.png"></div>
+    <div class="dock-sep"></div>
+    <div class="dock-app" title="Vivaldi"><img src="icons/vivaldi.png"></div>
+    <div class="dock-app" title="Outlook"><img src="icons/outlook.png"></div>
+    <div class="dock-app" title="Teams"><img src="icons/teams.png"></div>
+    <div class="dock-app" title="Adobe Acrobat"><img src="icons/acrobat.png"></div>
+    <div class="dock-app" title="Photoshop"><img src="icons/photoshop.png"></div>
+    <div class="dock-app" title="Illustrator"><img src="icons/illustrator.png"></div>
+    <div class="dock-sep"></div>
+    <div class="dock-app" title="Trash"><img src="icons/bin.png"></div>
+  </div>
+
+  <div id="windows-container"></div>
+</div>
+
+<script>
+const clockEl=document.getElementById('clock');
+const dateEl=document.getElementById('menudate');
+function updateClock(){
+  const n=new Date();
+  clockEl.textContent=n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  dateEl.textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+updateClock();setInterval(updateClock,1000);
+
+const playlists=[
+  {name:'late night drive',emoji:'🌙',color:'#1a1a2e',songs:[
+    {name:'Midnight City',artist:'M83',dur:'4:03'},
+    {name:'Blinding Lights',artist:'The Weeknd',dur:'3:20'},
+    {name:'Levitating',artist:'Dua Lipa',dur:'3:23'},
+    {name:'As It Was',artist:'Harry Styles',dur:'2:37'},
+    {name:'Heat Waves',artist:'Glass Animals',dur:'3:59'}
+  ]},
+  {name:'concert feels',emoji:'🎸',color:'#2d1b33',songs:[
+    {name:'Mr. Brightside',artist:'The Killers',dur:'3:42'},
+    {name:'DO I WANNA KNOW?',artist:'Arctic Monkeys',dur:'4:32'},
+    {name:'Somebody Told Me',artist:'The Killers',dur:'3:17'},
+    {name:'R U Mine?',artist:'Arctic Monkeys',dur:'3:21'},
+    {name:'Take Me Out',artist:'Franz Ferdinand',dur:'3:57'}
+  ]},
+  {name:'study & focus',emoji:'📚',color:'#1a2d1a',songs:[
+    {name:'experience',artist:'Ludovico Einaudi',dur:'5:14'},
+    {name:"Comptine d'un autre",artist:'Yann Tiersen',dur:'2:32'},
+    {name:'River Flows In You',artist:'Yiruma',dur:'3:50'},
+    {name:'Clair de Lune',artist:'Debussy',dur:'4:58'},
+    {name:'Gymnopédie No.1',artist:'Erik Satie',dur:'3:20'}
+  ]},
+  {name:'main character era',emoji:'✨',color:'#2d2418',songs:[
+    {name:'Golden Hour',artist:'JVKE',dur:'3:29'},
+    {name:'good 4 u',artist:'Olivia Rodrigo',dur:'2:58'},
+    {name:'Flowers',artist:'Miley Cyrus',dur:'3:20'},
+    {name:'Anti-Hero',artist:'Taylor Swift',dur:'3:20'},
+    {name:'Espresso',artist:'Sabrina Carpenter',dur:'2:55'}
+  ]}
+];
+
+let currentPlaylist=null,playingSong=null,isPlaying=false,windowZ=200;
+const activeWindows={};
+
+function getContent(type){
+  switch(type){
+    case 'about':return`<div class="about-content"><div class="about-header"><div class="about-avatar">FL</div><div><div class="about-name">Fioana Luthra</div><div class="about-role">UI/UX Designer · Graphic Designer · Creative</div></div></div><div class="about-bio">Hey! I'm Fioana — a designer who lives at the intersection of aesthetics and strategy. I love crafting experiences that feel intuitive, look beautiful, and actually mean something.</div><div class="about-bio">When I'm not designing, you'll find me at concerts, photographing random things, curating playlists, or hanging out with my dog. 🐶</div><div style="display:flex;flex-wrap:wrap;gap:8px"><span class="tag">UI/UX Design</span><span class="tag">Graphic Design</span><span class="tag">Brand Strategy</span><span class="tag">Advertising</span><span class="tag">Figma</span><span class="tag">Creative Direction</span></div></div>`;
+    case 'projects':return`<div class="project-grid">
+      <div class="project-card" onclick="openProjectPreview('always-red')"><img class="pcover" src="Always Red/always red cover.png" alt="Always Red"><div class="pinfo"><div class="ptype a">Ad Campaign</div><div class="pname">Always Red</div><div class="pdesc">Repositioning HSBC Red from a brand colour into a universal cultural language through global design.</div></div></div>
+      <div class="project-card" onclick="openProjectPreview('laal-lipstick')"><img class="pcover" src="laal lipstick/laal lipstick cover.png" alt="Laal Lipstick"><div class="pinfo"><div class="ptype a">Ad Campaign</div><div class="pname">Laal Lipstick</div><div class="pdesc">Turning a daily beauty ritual into a discreet solution for India's hidden anaemia crisis.</div></div></div>
+      <div class="project-card" onclick="openProjectPreview('samatasutra')"><img class="pcover" src="Samatasutra/samatasutra cover.png" alt="Samatāsūtra"><div class="pinfo"><div class="ptype a">Ad Campaign</div><div class="pname">Samatāsūtra</div><div class="pdesc">Designing India's first tactile consent guide to make sexual education accessible for people with intellectual disabilities.</div></div></div>
+      <div class="project-card" onclick="openProjectPreview('madrathon')"><img class="pcover" src="Madrathon/madrathon cover.jpg" alt="Madrathon"><div class="pinfo"><div class="ptype u">UI/UX Design</div><div class="pname">Madrathon</div><div class="pdesc">Creating an integrated marathon campaign and organizer-first app that streamlines live operations through intuitive UI/UX.</div></div></div>
+      <div class="project-card" onclick="openProjectPreview('censhership')"><img class="pcover" src="censhership/CensHERship cover.jpg" alt="CensHERship"><div class="pinfo"><div class="ptype a">Ad Campaign</div><div class="pname">CensHERship</div><div class="pdesc">Built a campaign exposing social media's censorship bias by hijacking male-coded health language to amplify women's health conversations.</div></div></div>
+      <div class="project-card" onclick="openProjectPreview('playing-cards')"><img class="pcover" src="I Paint Them So They Will Not Die/playing cards 1.jpg" alt="I Paint Them So They Will Not Die"><div class="pinfo"><div class="ptype g">Graphic & Product Design</div><div class="pname">I Paint Them So They Will Not Die</div><div class="pdesc">A Frida Kahlo-inspired deck of playing cards featuring real rescue dogs from Punjab, created to turn portraits into pathways to adoption.</div></div></div>
+    </div>`;
+    case 'resume':return`<div style="display:flex;flex-direction:column;gap:20px"><div style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#2d5a3d;color:white;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500">📄 Download Resume PDF</div><div><div class="resume-section-title">Experience</div><div class="resume-item"><div class="resume-item-header"><div class="resume-item-title">UI/UX Design Intern</div><div class="resume-item-date">2024 – Present</div></div><div class="resume-item-sub">Company · New Delhi, India</div><div class="resume-item-desc">Designed user flows, wireframes, and high-fidelity prototypes.</div></div><div class="resume-item"><div class="resume-item-header"><div class="resume-item-title">Graphic Design Freelance</div><div class="resume-item-date">2023 – Present</div></div><div class="resume-item-sub">Self-employed</div><div class="resume-item-desc">Brand identities, social media graphics, and print design.</div></div></div><div><div class="resume-section-title">Education</div><div class="resume-item"><div class="resume-item-header"><div class="resume-item-title">BDes / Design Program</div><div class="resume-item-date">2022 – 2026</div></div><div class="resume-item-sub">Your University · India</div></div></div><div><div class="resume-section-title">Skills</div><div style="display:flex;flex-wrap:wrap;gap:6px"><span class="tag">Figma</span><span class="tag">Illustrator</span><span class="tag">Photoshop</span><span class="tag">InDesign</span><span class="tag">After Effects</span><span class="tag">Framer</span><span class="tag">Brand Design</span><span class="tag">User Research</span></div></div></div>`;
+    case 'contact':return`<div style="display:flex;flex-direction:column;gap:20px"><div style="display:flex;flex-wrap:wrap;gap:10px"><a class="contact-link" href="mailto:fioanaluthra@email.com">📧 fioanaluthra@email.com</a><a class="contact-link" href="#" target="_blank">💼 LinkedIn</a><a class="contact-link" href="#" target="_blank">🎨 Behance</a><a class="contact-link" href="#" target="_blank">📸 Instagram</a></div><div class="contact-form"><div><label>Name</label><input type="text" placeholder="Your name"></div><div><label>Email</label><input type="email" placeholder="your@email.com"></div><div><label>Message</label><textarea placeholder="What's on your mind?"></textarea></div><button class="send-btn">Send Message ✉️</button></div></div>`;
+    case 'archive':return`<div style="margin-bottom:14px;font-size:13px;color:#666">Older work, experiments & explorations</div><div class="archive-grid">${[{e:'🎭',l:'Theatre Poster Series'},{e:'🌿',l:'Nature Photography'},{e:'✏️',l:'Sketchbook 2022'},{e:'🎬',l:'Motion Graphics'},{e:'📰',l:'Editorial Layout'},{e:'🎪',l:'Event Branding'},{e:'🌈',l:'Type Experiments'},{e:'📷',l:'Film Photography'},{e:'🖌️',l:'Digital Illustration'}].map(i=>`<div class="archive-item"><div class="archive-thumb" style="background:#f5f5f0">${i.e}</div><div class="archive-label">${i.l}</div></div>`).join('')}</div>`;
+    case 'playlists':return renderPlaylists();
+  }
+}
+
+function renderPlaylists(){
+  if(currentPlaylist!==null){
+    const pl=playlists[currentPlaylist];
+    return`<div class="music-app"><div class="music-sidebar"><div class="music-sidebar-section">Library</div><div class="music-sidebar-item active">🎵 Playlists</div><div class="music-sidebar-item">🎤 Artists</div><div class="music-sidebar-item">💿 Albums</div><div class="music-sidebar-item">🎵 Songs</div></div><div style="flex:1;display:flex;flex-direction:column;overflow:hidden"><div class="music-main"><div class="songs-back" onclick="currentPlaylist=null;refreshMusic()">← Playlists</div><div class="songs-header"><div class="songs-cover" style="background:${pl.color}">${pl.emoji}</div><div><div class="songs-title">${pl.name}</div><div class="songs-subtitle">${pl.songs.length} songs · by Fioana</div></div></div>${pl.songs.map((s,i)=>`<div class="song-row" onclick="playSong(${currentPlaylist},${i})"><div class="song-num ${playingSong===currentPlaylist+'-'+i?'song-playing':''}">${playingSong===currentPlaylist+'-'+i&&isPlaying?'♪':i+1}</div><div class="song-info"><div class="song-name ${playingSong===currentPlaylist+'-'+i?'song-playing':''}">${s.name}</div><div class="song-artist">${s.artist}</div></div><div class="song-dur">${s.dur}</div></div>`).join('')}</div>${renderNowPlaying()}</div></div>`;
+  }
+  return`<div class="music-app"><div class="music-sidebar"><div class="music-sidebar-section">Library</div><div class="music-sidebar-item active">🎵 Playlists</div><div class="music-sidebar-item">🎤 Artists</div><div class="music-sidebar-item">💿 Albums</div><div class="music-sidebar-item">🎵 Songs</div></div><div style="flex:1;display:flex;flex-direction:column;overflow:hidden"><div class="music-main"><div class="music-header">Playlists</div><div class="playlist-grid">${playlists.map((pl,i)=>`<div class="playlist-card" onclick="currentPlaylist=${i};refreshMusic()"><div class="playlist-cover" style="background:${pl.color}">${pl.emoji}</div><div class="playlist-info"><div class="playlist-name">${pl.name}</div><div class="playlist-count">${pl.songs.length} songs</div></div><div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>`).join('')}</div></div>${renderNowPlaying()}</div></div>`;
+}
+
+function renderNowPlaying(){
+  if(!playingSong)return`<div class="nowplaying-bar"><div style="color:#555;font-size:13px">Not playing</div></div>`;
+  const[pli,si]=playingSong.split('-').map(Number);const s=playlists[pli].songs[si];
+  return`<div class="nowplaying-bar"><div class="np-cover" style="background:${playlists[pli].color}">${playlists[pli].emoji}</div><div class="np-info"><div class="np-song">${s.name}</div><div class="np-artist">${s.artist}</div></div><div class="np-controls"><button class="np-btn">⏮</button><button class="np-btn np-play" onclick="togglePlay();event.stopPropagation()">${isPlaying?'⏸':'▶'}</button><button class="np-btn">⏭</button></div></div>`;
+}
+
+function playSong(pli,si){playingSong=pli+'-'+si;isPlaying=true;refreshMusic();}
+function togglePlay(){isPlaying=!isPlaying;refreshMusic();}
+function refreshMusic(){if(activeWindows['playlists']){activeWindows['playlists'].querySelector('.window-body').innerHTML=renderPlaylists();}}
+
+const windowConfig={
+  about:{title:'About Me',width:520,height:420},
+  projects:{title:'Projects',width:820,height:560},
+  resume:{title:'Resume',width:540,height:500},
+  contact:{title:'Contact Me',width:480,height:420},
+  archive:{title:'Archive',width:560,height:440},
+  playlists:{title:'Music',width:620,height:480},
+};
+
+function openWindow(type){
+  if(activeWindows[type]){activeWindows[type].style.zIndex=++windowZ;return;}
+  const cfg=windowConfig[type];
+  const isMusic=type==='playlists';
+  const win=document.createElement('div');
+  win.className='window';
+  win.style.cssText=`width:${cfg.width}px;left:${160+Math.random()*280}px;top:${44+Math.random()*80}px;`;
+  win.style.zIndex=++windowZ;
+  win.innerHTML=`<div class="window-titlebar"><div class="traffic-lights"><div class="tl tl-close" onclick="closeWindow('${type}')"></div><div class="tl tl-min"></div><div class="tl tl-max"></div></div><div class="window-title">${cfg.title}</div></div><div class="window-body" style="${isMusic?'padding:0;display:flex;flex-direction:column;height:'+cfg.height+'px;overflow:hidden':''}">${getContent(type)}</div>`;
+  document.getElementById('windows-container').appendChild(win);
+  activeWindows[type]=win;
+  win.querySelector('.window-titlebar').addEventListener('mousedown',e=>startDrag(win,e));
+  win.addEventListener('mousedown',()=>win.style.zIndex=++windowZ);
+}
+
+function closeWindow(type){
+  if(activeWindows[type]){activeWindows[type].remove();delete activeWindows[type];if(type==='playlists')currentPlaylist=null;}
+}
+
+function startDrag(win,e){
+  if(e.target.classList.contains('tl'))return;
+  const sx=e.clientX-win.offsetLeft,sy=e.clientY-win.offsetTop;
+  const onMove=e=>{win.style.left=(e.clientX-sx)+'px';win.style.top=Math.max(28,e.clientY-sy)+'px';};
+  const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);};
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+// Project data
+const projectData={
+  'always-red':{
+    title:'Always Red',
+    type:'Ad Campaign',
+    desc:'How do you make the world\'s most common colour feel uniquely yours? Always Red reimagines HSBC\'s iconic red not as a brand colour, but as a cultural thread connecting millions of people across the world. Through locally relevant experiences and a unified global design system, the campaign turns a familiar colour into HSBC\'s most distinctive asset.',
+    media:[
+      {type:'img',src:'Always Red/always red cover.png'},
+      {type:'img',src:'Always Red/always red 2.png'},
+      {type:'img',src:'Always Red/always red 3.png'},
+      {type:'img',src:'Always Red/always red 4.png'},
+      {type:'img',src:'Always Red/always red 5.png'},
+      {type:'img',src:'Always Red/always red 6.png'},
+      {type:'img',src:'Always Red/always red 7.png'},
+      {type:'img',src:'Always Red/always red 8.png'},
+    ]
+  },
+  'laal-lipstick':{
+    title:'Laal Lipstick',
+    type:'Ad Campaign',
+    desc:'Healthcare is most effective when it fits naturally into people\'s lives. Laal Lipstick combines beauty and medicine by embedding transdermal iron delivery into lipstick, turning an everyday cultural ritual into an accessible approach to improving women\'s health.',
+    media:[
+      {type:'img',src:'laal lipstick/laal lipstick cover.png'},
+      {type:'youtube',src:'https://www.youtube.com/embed/q1uqKgTV8zk'},
+      {type:'img',src:'laal lipstick/laal lipstick ideaboard.png'},
+    ]
+  },
+  'samatasutra':{
+    title:'Samatāsūtra',
+    type:'Ad Campaign',
+    desc:'Accessibility is more than simplifying information — it\'s rethinking how people learn. Samatāsūtra is a tactile editorial experience that uses texture, illustration, and audio to make consent education more inclusive for people with intellectual disabilities.',
+    media:[
+      {type:'img',src:'Samatasutra/samatasutra cover.png'},
+      {type:'img',src:'Samatasutra/board 2.png'},
+      {type:'img',src:'Samatasutra/board 3.png'},
+      {type:'img',src:'Samatasutra/board 4.png'},
+      {type:'img',src:'Samatasutra/board 5.png'},
+      {type:'img',src:'Samatasutra/board 6.png'},
+      {type:'img',src:'Samatasutra/board 7.png'},
+      {type:'img',src:'Samatasutra/board 8.png'},
+    ]
+  },
+  'madrathon':{
+    title:'Madrathon',
+    type:'UI/UX Design',
+    desc:'MADRATHON is a campaign-led event concept that transforms a marathon into an immersive Halloween experience. Combining brand strategy, visual identity, and an organizer-first management app, the project creates a unified system that supports participants, organizers, and live event operations alike.',
+    media:[
+      {type:'img',src:'Madrathon/1 Medium.jpeg'},
+      {type:'img',src:'Madrathon/2 Medium.jpeg'},
+      {type:'img',src:'Madrathon/3 Medium.jpeg'},
+      {type:'img',src:'Madrathon/4 Medium.jpeg'},
+      {type:'img',src:'Madrathon/5 Medium.jpeg'},
+      {type:'img',src:'Madrathon/6 Medium.jpeg'},
+      {type:'img',src:'Madrathon/7 Medium.jpeg'},
+      {type:'img',src:'Madrathon/8 Medium.jpeg'},
+      {type:'img',src:'Madrathon/9 Medium.jpeg'},
+      {type:'img',src:'Madrathon/10 Medium.jpeg'},
+      {type:'img',src:'Madrathon/11 Medium.jpeg'},
+      {type:'img',src:'Madrathon/12 Medium.jpeg'},
+      {type:'img',src:'Madrathon/13 Medium.jpeg'},
+      {type:'img',src:'Madrathon/14 Medium.jpeg'},
+      {type:'img',src:'Madrathon/15 Medium.jpeg'},
+      {type:'img',src:'Madrathon/16 Medium.jpeg'},
+      {type:'img',src:'Madrathon/17 Medium.jpeg'},
+      {type:'img',src:'Madrathon/18 Medium.jpeg'},
+      {type:'img',src:'Madrathon/19 Medium.jpeg'},
+      {type:'img',src:'Madrathon/20 Medium.jpeg'},
+      {type:'img',src:'Madrathon/21 Medium.jpeg'},
+      {type:'img',src:'Madrathon/22 Medium.jpeg'},
+      {type:'img',src:'Madrathon/23 Medium.jpeg'},
+      {type:'img',src:'Madrathon/24 Medium.jpeg'},
+      {type:'img',src:'Madrathon/25 Medium.jpeg'},
+      {type:'img',src:'Madrathon/26 Medium.jpeg'},
+      {type:'img',src:'Madrathon/27 Medium.jpeg'},
+      {type:'img',src:'Madrathon/28 Medium.jpeg'},
+      {type:'img',src:'Madrathon/29 Medium.jpeg'},
+      {type:'img',src:'Madrathon/30 Medium.jpeg'},
+      {type:'img',src:'Madrathon/31 Medium.jpeg'},
+      {type:'img',src:'Madrathon/32 Medium.jpeg'},
+      {type:'img',src:'Madrathon/33 Medium.jpeg'},
+      {type:'img',src:'Madrathon/34 Medium.jpeg'},
+      {type:'img',src:'Madrathon/35 Medium.jpeg'},
+      {type:'img',src:'Madrathon/36 Medium.jpeg'},
+      {type:'img',src:'Madrathon/37 Medium.jpeg'},
+      {type:'img',src:'Madrathon/38 Medium.jpeg'},
+      {type:'img',src:'Madrathon/39 Medium.jpeg'},
+      {type:'img',src:'Madrathon/40 Medium.jpeg'},
+      {type:'img',src:'Madrathon/41 Medium.jpeg'},
+      {type:'img',src:'Madrathon/42 Medium.jpeg'},
+      {type:'img',src:'Madrathon/43 Medium.jpeg'},
+      {type:'img',src:'Madrathon/44 Medium.jpeg'},
+      {type:'img',src:'Madrathon/45 Medium.jpeg'},
+      {type:'img',src:'Madrathon/46 Medium.jpeg'},
+      {type:'img',src:'Madrathon/47 Medium.jpeg'},
+      {type:'img',src:'Madrathon/48 Medium.jpeg'},
+      {type:'img',src:'Madrathon/49 Medium.jpeg'},
+      {type:'img',src:'Madrathon/50 Medium.jpeg'},
+      {type:'img',src:'Madrathon/51 Medium.jpeg'},
+      {type:'img',src:'Madrathon/52 Medium.jpeg'},
+      {type:'img',src:'Madrathon/53 Medium.jpeg'},
+      {type:'img',src:'Madrathon/54 Medium.jpeg'},
+      {type:'img',src:'Madrathon/55 Medium.jpeg'},
+      {type:'img',src:'Madrathon/56 Medium.jpeg'},
+      {type:'img',src:'Madrathon/57 Medium.jpeg'},
+      {type:'img',src:'Madrathon/58 Medium.jpeg'},
+      {type:'img',src:'Madrathon/59 Medium.jpeg'},
+      {type:'img',src:'Madrathon/60 Medium.jpeg'},
+      {type:'img',src:'Madrathon/61 Medium.jpeg'},
+      {type:'img',src:'Madrathon/62 Medium.jpeg'},
+      {type:'img',src:'Madrathon/63 Medium.jpeg'},
+      {type:'img',src:'Madrathon/64 Medium.jpeg'},
+      {type:'img',src:'Madrathon/65 Medium.jpeg'},
+      {type:'img',src:'Madrathon/66 Medium.jpeg'},
+      {type:'img',src:'Madrathon/67 Medium.jpeg'},
+      {type:'img',src:'Madrathon/68 Medium.jpeg'},
+      {type:'img',src:'Madrathon/69 Medium.jpeg'},
+      {type:'img',src:'Madrathon/70 Medium.jpeg'},
+      {type:'img',src:'Madrathon/71 Medium.jpeg'},
+      {type:'img',src:'Madrathon/72 Medium.jpeg'},
+      {type:'img',src:'Madrathon/73 Medium.jpeg'},
+      {type:'img',src:'Madrathon/74 Medium.jpeg'},
+      {type:'img',src:'Madrathon/75 Medium.jpeg'},
+      {type:'img',src:'Madrathon/76 Medium.jpeg'},
+      {type:'img',src:'Madrathon/77 Medium.jpeg'},
+      {type:'img',src:'Madrathon/78 Medium.jpeg'},
+      {type:'img',src:'Madrathon/79 Medium.jpeg'},
+      {type:'img',src:'Madrathon/80 Medium.jpeg'},
+      {type:'img',src:'Madrathon/81 Medium.jpeg'},
+      {type:'img',src:'Madrathon/82 Medium.jpeg'},
+      {type:'img',src:'Madrathon/83 Medium.jpeg'},
+      {type:'img',src:'Madrathon/84 Medium.jpeg'},
+      {type:'img',src:'Madrathon/85 Medium.jpeg'},
+      {type:'img',src:'Madrathon/86 Medium.jpeg'},
+      {type:'img',src:'Madrathon/87 Medium.jpeg'},
+      {type:'img',src:'Madrathon/88 Medium.jpeg'},
+      {type:'img',src:'Madrathon/89 Medium.jpeg'},
+      {type:'img',src:'Madrathon/90 Medium.jpeg'},
+      {type:'img',src:'Madrathon/91 Medium.jpeg'},
+      {type:'img',src:'Madrathon/92 Medium.jpeg'},
+      {type:'img',src:'Madrathon/93 Medium.jpeg'},
+      {type:'img',src:'Madrathon/94 Medium.jpeg'},
+      {type:'img',src:'Madrathon/95 Medium.jpeg'},
+    ]
+  },
+  'censhership':{
+    title:'CensHERship',
+    type:'Ad Campaign',
+    desc:'Social media algorithms influence which conversations reach millions of people. CensHERship reveals the bias embedded within these systems by repurposing male-coded health language to amplify women\'s health content, using the platform\'s own mechanics to advocate for greater visibility and awareness.',
+    media:[
+      {type:'img',src:'censhership/CensHERship cover.jpg'},
+      {type:'video',src:'censhership/CensHERship final.mp4'},
+      {type:'img',src:'censhership/CensHERship Ideaboard.jpg'},
+    ]
+  },
+  'playing-cards':{
+    title:'I Paint Them So They Will Not Die',
+    type:'Graphic & Product Design',
+    desc:'Inspired by Frida Kahlo\'s expressive portraits, this project reimagines adoptable rescue dogs from Punjab as a deck of illustrated playing cards. Each card represents a real dog waiting for a forever home through local NGOs. By turning every rescue into a collectible portrait, the project uses art to spark curiosity, conversation, and ultimately, adoption.',
+    media:[
+      {type:'img',src:'I Paint Them So They Will Not Die/playing cards 1.jpg'},
+      {type:'img',src:'I Paint Them So They Will Not Die/playing cards 2.jpg'},
+      {type:'img',src:'I Paint Them So They Will Not Die/playing cards 3.jpg'},
+      {type:'img',src:'I Paint Them So They Will Not Die/playing cards 4.jpg'},
+      {type:'img',src:'I Paint Them So They Will Not Die/playing cards 5.jpg'},
+    ]
+  },
+};
+
+let currentProjectIndex=0;
+
+function openProjectPreview(key){
+  const p=projectData[key];
+  if(!p)return;
+  currentProjectIndex=0;
+  const id='preview-'+key;
+  if(activeWindows[id]){activeWindows[id].style.zIndex=++windowZ;return;}
+  const win=document.createElement('div');
+  win.className='window';
+  win.style.cssText=`width:1200px;height:750px;left:${20+Math.random()*40}px;top:${30+Math.random()*30}px;`;
+  win.style.zIndex=++windowZ;
+  win.innerHTML=`
+    <div class="window-titlebar">
+      <div class="traffic-lights">
+        <div class="tl tl-close" onclick="closeWindow('${id}')"></div>
+        <div class="tl tl-min"></div>
+        <div class="tl tl-max"></div>
+      </div>
+      <div class="window-title">${p.title}</div>
+    </div>
+    <div style="display:flex;flex:1;overflow:hidden;height:710px">
+      <div class="preview-main">
+        <div class="preview-toolbar">
+          <button class="preview-nav-btn" onclick="previewNav('${id}','${key}',-1)">‹</button>
+          <span class="preview-counter" id="counter-${id}">1 / ${p.media.length}</span>
+          <button class="preview-nav-btn" onclick="previewNav('${id}','${key}',1)">›</button>
+        </div>
+        <div class="preview-content" id="content-${id}">${renderMedia(p.media[0])}</div>
+        <div class="preview-filmstrip" id="filmstrip-${id}">
+          ${p.media.map((m,i)=>`<div class="filmstrip-item${i===0?' active':''}" onclick="previewJump('${id}','${key}',${i})" id="thumb-${id}-${i}">
+            ${m.type==='video'?`<div class="video-thumb">▶</div>`:`<img src="${m.src}" loading="lazy">`}
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="preview-sidebar">
+        <div class="preview-sidebar-type">${p.type}</div>
+        <div class="preview-sidebar-title">${p.title}</div>
+        <div class="preview-divider"></div>
+        <div class="preview-sidebar-section">Description</div>
+        <div class="preview-sidebar-desc">${p.desc}</div>
+      </div>
+    </div>`;
+  document.getElementById('windows-container').appendChild(win);
+  activeWindows[id]=win;
+  win.querySelector('.window-titlebar').addEventListener('mousedown',e=>startDrag(win,e));
+  win.addEventListener('mousedown',()=>win.style.zIndex=++windowZ);
+}
+
+function renderMedia(m){
+  if(!m)return'';
+  if(m.type==='youtube')return`<iframe src="${m.src}" style="width:100%;height:100%;border:none;border-radius:4px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  if(m.type==='video')return`<video src="${m.src}" controls style="max-width:100%;max-height:100%;border-radius:4px;"></video>`;
+  if(m.type==='pdf')return`<iframe src="${m.src}" style="width:100%;height:100%;border:none;border-radius:4px;"></iframe>`;
+  return`<img src="${m.src}" style="width:100%;height:100%;object-fit:contain;border-radius:4px;">`;
+}
+
+function previewNav(id,key,dir){
+  const p=projectData[key];
+  const wins=activeWindows[id];if(!wins)return;
+  currentProjectIndex=Math.max(0,Math.min(p.media.length-1,currentProjectIndex+dir));
+  previewJump(id,key,currentProjectIndex);
+}
+
+function previewJump(id,key,idx){
+  const p=projectData[key];
+  currentProjectIndex=idx;
+  const content=document.getElementById('content-'+id);
+  const counter=document.getElementById('counter-'+id);
+  if(content)content.innerHTML=renderMedia(p.media[idx]);
+  if(counter)counter.textContent=`${idx+1} / ${p.media.length}`;
+  document.querySelectorAll(`[id^="thumb-${id}-"]`).forEach((el,i)=>{
+    el.classList.toggle('active',i===idx);
+  });
+}
+</script>
+</body>
+</html>
